@@ -13,9 +13,6 @@ const QuestionSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  answer: {
-    type: String,
-  },
   options: {
     type: [{ type: String }], 
     required: function() { 
@@ -24,4 +21,4 @@ const QuestionSchema = new mongoose.Schema({
   },
 });
 
-export default QuestionSchema;
+const Question = mongoose.model("Question", QuestionSchema)
