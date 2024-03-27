@@ -1,16 +1,33 @@
 const QuestionSchema = require('./question.model.js')
 const FormSchema = new mongoose.Schema({
-    titulo: {
+    title: {
       type: String,
       required: true,
+      validator: (value) => {
+        const encrypted = encrypt(value);
+        return encrypted;
+      },
     },
-    descricao: {
+    description: {
       type: String,
+      validator: (value) => {
+        const encrypted = encrypt(value);
+        return encrypted;
+      },
     },
-    questoes: {
+    questions: {
       type: [QuestionSchema],
       required: true,
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
   });
 
 
