@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Form = mongoose.model('Form', require('../models/form.schema'));
+const Form = mongoose.model('Form', require('../models/form.model'));
 
 
 const getAllForms = async (req, res) => {
