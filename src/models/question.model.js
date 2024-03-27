@@ -9,14 +9,29 @@ const QuestionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    validator: (value) => {
+      const encrypted = encrypt(value);
+      return encrypted;
+    },
   },
   description: {
     type: String,
+    validator: (value) => {
+      const encrypted = encrypt(value);
+      return encrypted;
+    },
   },
   options: {
     type: [{ type: String }], 
     required: function() { 
       return this.type === 1;
+    },
+  },
+  correctAnswer: { 
+    type: String, 
+    validator: (value) => {
+      const encrypted = encrypt(value);
+      return encrypted;
     },
   },
 });
