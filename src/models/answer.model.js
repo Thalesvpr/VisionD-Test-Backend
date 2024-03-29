@@ -16,11 +16,18 @@ const AnswerSchema = new mongoose.Schema({
     answer: { 
       type: String, 
       required: true,
-      validator: (value) => {
-        const encrypted = encrypt(value);
-        return encrypted;
-      },
     },
     
   }],
-});
+})
+
+AnswerSchema.pre('save', function(next) {
+  const answer = this;
+  answer.answers.forEach(ans => {
+    ans.answer = encrypt(ans.answer);
+  })
+  next()
+})
+const Answer = mongoose.model("Answer", AnswerSchema)
+
+module.exports = Answer;

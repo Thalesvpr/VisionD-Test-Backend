@@ -1,6 +1,7 @@
 
 const jwt = require('jsonwebtoken');
-function auth(req, res, next) {
+
+const  verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
   
     if (!token) {
@@ -8,12 +9,20 @@ function auth(req, res, next) {
     }
   
     try {
-        req.userId = jwt.verify(token, 'secret').id;
+        req.userId = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET).id;
       next();
     } catch (err) {
       return res.status(401).json({ message: 'Token inválido' });
     }
   }
 
+const getToken = (User) => {
+    const token = jwt.sign({ id: User.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+  
+    return token
+};
 
-module.exports = {auth};
+
+
+
+module.exports = {verifyToken, getToken};

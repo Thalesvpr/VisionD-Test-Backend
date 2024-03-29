@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Answer = mongoose.model('Answer', require('../models/answer.schema'));
+
+const Answer = require('../models/answer.model')
 
 const createFormAnswers = async (req, res) => {
   const { formId, answers } = req.body;
@@ -10,6 +10,7 @@ const createFormAnswers = async (req, res) => {
 
   const newAnswer = new Answer({ formId, answers });
 
+
   try {
     await newAnswer.save();
     res.status(201).json({ message: 'Resposta criada com sucesso.' });
@@ -18,11 +19,13 @@ const createFormAnswers = async (req, res) => {
   }
 };
 
+
 const getAllFormAnswers = async (req, res) => {
+    
     const formId  = req.params.formId;
 
     if (!formId) {
-      return res.status(400).json({ error: 'Campos FormId obrigatório.' });
+      return res.status(400).json({ error: 'O parametro FormId é obrigatório.' });
     }
   try {
     const answers = await Answer.find({ formId: formId })
@@ -58,3 +61,4 @@ module.exports = {
     getAllFormAnswers,
     getFormAnswerById,
 };
+

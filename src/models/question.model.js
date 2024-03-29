@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { encrypt } = require('../shared/security/security');
 
 const QuestionSchema = new mongoose.Schema({
   type: {
@@ -9,17 +10,14 @@ const QuestionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    validator: (value) => {
-      const encrypted = encrypt(value);
-      return encrypted;
-    },
   },
   description: {
     type: String,
-    validator: (value) => {
-      const encrypted = encrypt(value);
-      return encrypted;
-    },
+
+  },
+  isRequired:{
+    type: Boolean,
+    default: false
   },
   options: {
     type: [{ type: String }], 
@@ -27,14 +25,39 @@ const QuestionSchema = new mongoose.Schema({
       return this.type === 1;
     },
   },
-  correctAnswer: { 
-    type: String, 
-    validator: (value) => {
-      const encrypted = encrypt(value);
-      return encrypted;
-    },
-  },
 });
+QuestionSchema.pre('save', function (next) {
+  const question = this;
+  question.title = encrypt(question.title)
+  question.description = encrypt(question.description)
+  question.options = question.options.map(option => encrypt(option))
+  next();
+});
+
+QuestionSchema.post('findOne', function(doc, next) {
+  if (doc) {
+      doc.title = decrypt(doc.title);
+      doc.description = decrypt(doc.description);
+      if (doc.options && Array.isArray(doc.options)) {
+          doc.options = doc.options.map(option => decrypt(option));
+      }
+  }
+  next();
+});
+
+QuestionSchema.post('find', function(docs, next) {
+  if (docs) {
+      docs.forEach(doc => {
+          doc.title = decrypt(doc.title);
+          doc.description = decrypt(doc.description);
+          if (doc.options && Array.isArray(doc.options)) {
+              doc.options = doc.options.map(option => decrypt(option));
+          }
+      });
+  }
+  next();
+});
+
 
 const Question = mongoose.model("Question", QuestionSchema)
 

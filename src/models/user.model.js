@@ -18,10 +18,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6,
-    validator: (value) => {
-        const encrypted = encrypt(value);
-        return encrypted;
-      },
   },
   isActive: {
     type: Boolean,
@@ -32,6 +28,12 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+UserSchema.pre('save', function (next) {
+  const user = this;
+    user.password = encrypt(user.password);
+    next()
+});
+
 
 UserSchema.methods.toJSON = function() {
   const user = this.toObject();
