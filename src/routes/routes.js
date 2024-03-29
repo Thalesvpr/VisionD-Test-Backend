@@ -12,8 +12,10 @@ const userController = require('../controllers/user.controller.js');
 // Rotas para Formulários
 
 router.get('/forms/:userId', formController.getAllForms);
-router.get('/forms/:id', formController.getFormById);
-router.post('/forms', formController.createForm);
+router.get('/form/:id', formController.getFormById);
+router.post('/forms',
+// verifyToken,
+formController.createForm);
 router.put('/forms/:id', formController.updateFormById);
 router.delete('/forms/:id', formController.deleteFormById);
 

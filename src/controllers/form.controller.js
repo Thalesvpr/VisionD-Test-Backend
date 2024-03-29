@@ -19,6 +19,7 @@ const getAllForms = async (req, res) => {
 
 
 const getFormById = async (req, res) => {
+
   try {
     const form = await Form.findById(req.params.id);
     if (!form) {
@@ -38,7 +39,7 @@ const createForm = async (req, res) => {
     await form.save();
     res.status(201).json(form);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao criar formulário.' });
+    res.status(500).json(error);
   }
 };
 const updateFormById = async (req, res) => {
