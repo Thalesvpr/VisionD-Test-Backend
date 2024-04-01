@@ -8,12 +8,13 @@ const getAllForms = async (req, res) => {
   if (!userId) {
     return res.status(400).json({ error: 'O parametro userId é obrigatório.' });
   }
+
   try {
     const forms = await Form.find({createdBy: userId});
     res.status(200).json(forms);
   } catch (error) 
   {
-    res.status(500).json({ error: 'Erro ao buscar formulários.' });
+    res.status(500).json({ error: 'Erro ao buscar formulários.', type: error });
   }
 };
 
@@ -30,6 +31,18 @@ const getFormById = async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar formulario.' });
   }
 };
+const getFormByIdActive = async (req, res) => {
+  try {
+    const form = await Form.findOne({ _id: req.params.id, isActive: true });
+    if (!form) {
+      return res.status(404).json({ error: 'Formulário não encontrado ou não está ativo.' });
+    }
+    res.status(200).json(form);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar formulário.' });
+  }
+};
+
 
 
 const createForm = async (req, res) => {
@@ -56,27 +69,11 @@ const updateFormById = async (req, res) => {
 
 
 
-const deleteFormById = async (req, res) => {
-
-    const FormId = req.params.id;
-  try {
-    const Form = await Form.findByIdAndUpdate(FormId, { isActive: false });
-
-    if (!Form) {
-      return res.status(404).json({ error: 'Usuario não encontrado.' });
-    }
-    res.status(200).json({ message: 'Usuario excluído com sucesso.' });
-
-
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao excluir Usuario.' });
-  }
-};
 
 module.exports = {
+  getFormByIdActive,
   getAllForms,
   getFormById,
   createForm,
   updateFormById,
-  deleteFormById,
 };

@@ -12,14 +12,34 @@ function encrypt(text) {
     return iv.toString('hex') + encrypted;
   }
 
+  // function decrypt(text) {
+  //   try {
+  //     const algorithm = 'aes-256-cbc';
+  //     const iv = Buffer.from(text.substring(0, 32), 'hex');
+  //     const encryptedText = text.substring(32);
+  //     const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+  //     const decrypted = decipher.update(encryptedText, 'hex', 'utf8') + decipher.final('utf8');
+  //     return decrypted;
+  //   } catch (error){
+  //     console.log(error)
+  //   }
+  // }
+
   function decrypt(text) {
-    const algorithm = 'aes-256-cbc';
-    const iv = Buffer.from(text.substring(0, 32), 'hex');
-    const encryptedText = text.substring(32);
-    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
-    const decrypted = decipher.update(encryptedText, 'hex', 'utf8') + decipher.final('utf8');
-    return decrypted;
-  }
+    try {
+        const algorithm = 'aes-256-cbc';
+        const iv = Buffer.from(text.substring(0, 32), 'hex');
+        
+        const encryptedText = text.substring(32);
+        
+        const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+        const decrypted = decipher.update(encryptedText, 'hex', 'utf8') + decipher.final('utf8');
+        return decrypted;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 

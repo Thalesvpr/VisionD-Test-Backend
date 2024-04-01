@@ -13,11 +13,13 @@ const FormSchema = new mongoose.Schema({
       type: [Question.schema],
       ref: 'Question',
       required: true,
+  
   },
   isActive: {
     type: Boolean,
     default: true
   },
+
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -32,6 +34,31 @@ const FormSchema = new mongoose.Schema({
 
       next()
   });
+  // chat gpt: aqui tem que colocar um pra quando for fazer o opdate com Form.findByIdAndUpdate
+  FormSchema.pre('findOneAndUpdate', function (next) {
+    const update = this.getUpdate(); // Obtém os dados de atualização
+    if (update.title) {
+        update.title = encrypt(update.title);
+    }
+    if (update.description) {
+        update.description = encrypt(update.description);
+    }
+    if (update.questions) {
+        update.questions.forEach(question => {
+            if (question.title) {
+                question.title = encrypt(question.title);
+            }
+            if (question.description) {
+                question.description = encrypt(question.description);
+            }
+            if (question.options && Array.isArray(question.options)) {
+                question.options = question.options.map(option => encrypt(option));
+            }
+        });
+    }
+    next();
+});
+
   FormSchema.post('findOne', async function(doc, next) {
     if (doc) {
         // Descriptografa o título e a descrição do formulário
@@ -85,6 +112,8 @@ const FormSchema = new mongoose.Schema({
 FormSchema.post('find', function(docs, next) {
     if (docs) {
         docs.forEach(doc => {
+          // console.log("------------")
+          // console.log(doc.title)
             doc.title = decrypt(doc.title);
             doc.description = decrypt(doc.description);
         });
